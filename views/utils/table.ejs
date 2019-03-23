@@ -1,0 +1,15 @@
+<table>
+    <tr>
+    <%  Object.keys(data).forEach(function (key) { %>
+        <th><%= key %></th>
+    <% }) %>
+    </tr>
+ 
+    <% for (var i = 0; i < data.length; i++) { %>
+     <tr>
+        <%= data[i].forEach(function(thing) { %>
+        <td> <%= thing %> </td>
+        <% } %>
+     </tr>    
+    <% } %>
+ </table>
