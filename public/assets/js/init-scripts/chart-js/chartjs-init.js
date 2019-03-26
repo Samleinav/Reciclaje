@@ -382,7 +382,7 @@
             labels: [ "Sun", "Mon", "Tu", "Wed", "Th", "Fri", "Sat" ],
             datasets: [
                 {
-                    label: "My First dataset",
+                    label: "Points",
                     data: [ 40, 55, 75, 81, 56, 55, 40 ],
                     borderColor: "rgba(0, 123, 255, 0.9)",
                     borderWidth: "0",
