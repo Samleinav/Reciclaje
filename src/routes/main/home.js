@@ -1,52 +1,44 @@
 var express = require('express')
-var router = express.Router();
-
-var json = [{
-  "color": "red",
-  "value": "#f00",
-  "color1": "red",
-  "value2": "#f00"
-},
-{
-  "color": "red",
-  "value": "#f00",
-  "color1": null,
-  "value2": "#f002"
-},{
-  "color": "red",
-  "value": "#f00"
-}];
-
-var date = new Date();
-var current_hour = date.getHours();
-
-Ujson = {
-  Points : 400,
-  VIP : 7,
-  TCU : 450,
-  Referrals : 4,
-  Products_change: 21,
-  Friends: 11,
-  Activity: current_hour
-}
+    router = express.Router();
+    Service = require('./Service_home');
+    _auth = require('./Service_home').auth;
+    _points = require('./Service_home').points;
+    _user = require('./Service_home').user;
+    
 
 
+    router.get('*',function(req,res,next){
+      if(req.session.user){ 
+        res.locals.user = req.session.user 
+        return next()};
 
+      _user.get_user(req,function(error,response){
+        res.locals.user = req.session.user  = response;  
+        return next();
+      });
+    });
 
-router.use('*', function(req, res, next){
-  if(!req.session){
-    res.redirect('/login');
-    next();
-  }else{
-    console.log(req.sessionID);
-    next();
-  }
-})
-
-router.get('/', function(req, res, next) {  
-  res.locals.table = json;
-  
-    res.render('index', { title: 'hi', user : Ujson });
-  })
-
+    router.get('/', function(req, res, next) {   
+    //  _user._all_users(req,function(error,response){
+    //   res.locals.table = response;
+    //  });
+    res.render('index', { title: 'Dashboard'});
+  });
+  router.get('/login',function(req,res,next){
+    req.session.destroy();
+    res.render('login', { layout : false });    
+  });
+ 
+  router.post('/login',function(req,res,next){
+    _auth.login(req,function(error,response){
+      if(error){console.log('no funciona')
+        res.render('login', { layout : false });
+      }
+      switch(response){
+        case true : res.redirect("/");
+        break;
+        case false: res.render('login', { layout : false });
+      }
+    })
+  });
   module.exports = router;

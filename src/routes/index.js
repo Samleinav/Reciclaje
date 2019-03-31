@@ -1,7 +1,8 @@
 const
     subdomain = require('express-subdomain'),
-    apiRoute = require('./cp/index')
+    cpRoute = require('./cp/index')
     homeRoute = require('./main/home');
+    shopRoute = require('./shop/index');
     session = require('express-session');
 
 
@@ -12,16 +13,13 @@ function init(server) {
     resave: false,
     saveUninitialized: true
 }))
- 
-  server.use(subdomain('api', apiRoute))
+ //subdomain routes
+  server.use(subdomain('api', cpRoute));
+  server.use(subdomain('shop',shopRoute));
 
+  //main routes
   server.use('/', homeRoute);
 
-
-  server.get('*', function (req, res, next) {
-      console.log('Request was made to: ' + req.originalUrl);
-      return next();
-  });
 }
 
 module.exports = {

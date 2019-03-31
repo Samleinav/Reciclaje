@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <!--head  -->
+    <head>
+        <% include ./layout/head %>
+    </head>
+    <!--body  -->
+    <body>
+       
+       <div id="right-panel" class="right-panel">
+            <% include ./layout/partials/header %>
+                    <!--body render --> 
+            <div class="content mt-3"></div> 
+            <%- body%>
+            </div>
+
+
+            <% include ./layout/partials/footer %>
+       </div><!-- /#right-panel -->    
+    
+    
+    </body>
+    
+    <!--scripts -->
+    <% include ./layout/scripts %>
+</html>
