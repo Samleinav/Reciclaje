@@ -82,4 +82,9 @@
     <script src="vendors/popper.js/dist/umd/popper.min.js"></script>
     <script src="vendors/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="assets/js/main.js"></script>
+    <% if(locals.msg){ %>
+    <script type="text/javascript">
+            alert('<%= msg%>')
+    </script>
+    <% } %>
 </html>

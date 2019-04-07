@@ -1,47 +1,44 @@
 var express = require('express')
     router = express.Router();
-    _user = require('./Service_cp').user;
-    _auth = require('./Service_cp').auth;
-    _points = require('./Service_cp').points;
-    _addPoints = require('./Service_cp')._addPoints;
+    serviceCP = require('./Service_cp');
 
-router.get('*',function(req,res,next){
+  router.get('*',function(req,res,next){
       if(req.session.user){ 
         res.locals.user = req.session.user 
-        return next()};
-
-      _user.get_user(req,function(error,response){
-        res.locals.user = req.session.user  = response;  
+        res.locals.hostname = req.subdomains;
+        return next()
+      };
+        serviceCP._user(req,function(error,response){
+        res.locals.user = req.session.user  = response; 
+        res.locals.hostname = req.subdomains;
         return next();
+        //return res.redirect('/login');
       });
     });
 
- router.get('/', function(req, res, next) {    
-        res.render('indexcp', { title: 'Dashboard'});     
+ router.get('/', function(req, res, next) { 
+  serviceCP._recyclingPoints(function(error,response){
+    res.render('index1', { title: 'recycling point', Rpoints : response});     
+   })   
+        
    });
 
   router.get('/login',function(req,res,next){
-    req.session.destroy();
     res.render('login', { layout : false });    
   });
  
   router.post('/login',function(req,res,next){
-    _auth.login(req,function(error,response){
-      if(error){console.log('no funciona')
-        res.render('login', { layout : false });
-    }
-  
-    switch(response){
-      case true :  res.redirect("/");
-
-      break;
-      case false: res.render('login', { layout : false });
-    }
+    serviceCP._login(req,function(error,response){
+      if(error || response == false){
+        res.render('login', { layout : false , msg : "Fail Login"});
+      }
+      req.session.user = response;
+      res.redirect('/');
     })
   });
 
   router.post('/cp/points/add',function(req,res,next){
-    _addPoints(req,10,function(error,response){
+    serviceCP._addPoints(req,10,function(error,response){
       if(error){ res.send("error")}
       console.log(req.body)
       res.send("+10 puntos");

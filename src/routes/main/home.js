@@ -1,44 +1,37 @@
 var express = require('express')
     router = express.Router();
-    Service = require('./Service_home');
-    _auth = require('./Service_home').auth;
-    _points = require('./Service_home').points;
-    _user = require('./Service_home').user;
+    ServiceHome = require('./Service_home');
     
-
-
-    router.get('*',function(req,res,next){
+  router.get('*',function(req,res,next){
       if(req.session.user){ 
         res.locals.user = req.session.user 
+        res.locals.hostname = req.subdomains;
         return next()};
 
-      _user.get_user(req,function(error,response){
-        res.locals.user = req.session.user  = response;  
+        ServiceHome._user(req,function(error,response){
+        res.locals.user = req.session.user  = response; 
+        res.locals.hostname = req.subdomains;
         return next();
+         //return res.redirect('/login');
       });
     });
 
-    router.get('/', function(req, res, next) {   
-    //  _user._all_users(req,function(error,response){
-    //   res.locals.table = response;
-    //  });
+  router.get('/', function(req, res, next) {  
     res.render('index', { title: 'Dashboard'});
   });
+
   router.get('/login',function(req,res,next){
-    req.session.destroy();
     res.render('login', { layout : false });    
   });
  
   router.post('/login',function(req,res,next){
-    _auth.login(req,function(error,response){
-      if(error){console.log('no funciona')
-        res.render('login', { layout : false });
+    ServiceHome._login(req,function(error,response){
+      if(error || response == false){
+        res.render('login', { layout : false , msg : "Fail Login"});
       }
-      switch(response){
-        case true : res.redirect("/");
-        break;
-        case false: res.render('login', { layout : false });
-      }
+      req.session.user = response;
+      res.redirect('/');
     })
   });
+
   module.exports = router;

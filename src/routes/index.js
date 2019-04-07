@@ -4,15 +4,17 @@ const
     homeRoute = require('./main/home');
     shopRoute = require('./shop/index');
     session = require('express-session');
-
-
+    MemoryStore = require('memorystore')(session)
+ 
 function init(server) {
-
+  //session
   server.use(session({
+    store: new MemoryStore(),
     secret: '123456789',
-    resave: false,
+    resave: true,
     saveUninitialized: true
-}))
+  }));
+  
  //subdomain routes
   server.use(subdomain('api', cpRoute));
   server.use(subdomain('shop',shopRoute));
@@ -20,6 +22,7 @@ function init(server) {
   //main routes
   server.use('/', homeRoute);
 
+  
 }
 
 module.exports = {

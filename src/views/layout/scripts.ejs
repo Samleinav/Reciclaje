@@ -42,8 +42,11 @@
  <script src="vendors/datatables.net-buttons/js/buttons.html5.min.js"></script>
  <script src="vendors/datatables.net-buttons/js/buttons.print.min.js"></script>
  <script src="vendors/datatables.net-buttons/js/buttons.colVis.min.js"></script>
+ <% if(locals.hostname == "shop") { %>
+ <script src="assets/js/init-scripts/data-table/datatables-init-shop.js"></script>
+ <% }else {  %>
  <script src="assets/js/init-scripts/data-table/datatables-init.js"></script>
-
+<% } %>
  <!-- if include charts -->
  <script src="assets\js\init-scripts\chart-js\chartjs-init.js" ></script>
  <script src="vendors/chart.js/dist/Chart.bundle.min.js"></script>
@@ -64,7 +67,23 @@
                 }
             });
     });
-    
-   
-    
     </script>
+    
+    <script type="text/javascript" >
+        
+    var Table2json = function(table){
+        var myRows = [];
+        var $headers = jQuery("th");
+        var $rows = jQuery('#'+table+" tr").each(function(index) {
+            $cells = jQuery(this).find("td");
+            myRows[index] = {};
+            $cells.each(function(cellIndex) {
+                myRows[index][jQuery($headers[cellIndex]).html()] = $(this).html();
+        });    
+        });
+        var myObj = {};
+        return myObj.myrows = myRows;  
+    }
+
+    </script>
+    
