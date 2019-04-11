@@ -1,5 +1,21 @@
 const Request = require("sync-request");
 const _ = require('lodash');
+_userprofile= function(data){
+    return {
+            id: data.id,
+            email:data.email,
+            password:data.password_digest,
+            Points :data.points,
+            VIP : 7,
+            TCU : 450,
+            Referrals : 4,
+            Products_change: 21,
+            Friends: 11,
+            Activity: 5,
+            name : data.firstname,
+            lastname: data.lastname
+    };
+};
 
 class service_api {
     constructor() {
@@ -20,7 +36,8 @@ class service_api {
             Referrals : 4,
             Products_change: 21,
             Friends: 11,
-            Activity: 5
+            Activity: 5,
+            name : ""
         },{
             id: 2,
             email:"test1@test.com",
@@ -53,8 +70,6 @@ class service_api {
             let user = _.find(this.userdata, x => x.id === req.session.user.id);
             return callback(null,user);
         }
-        console.log('no session');
-        return callback(null,this.userdata[1]);
     };
 
     _login (req,callback){
@@ -64,14 +79,28 @@ class service_api {
         }
         
         if(req.body){
-            let user = _.find(this.userdata, x => x.email === req.body.email);
-            if(req.body.password === user.password){ 
-                console.log('auth success;');
-                return callback(null,user); 
-            };
+            //let user = _.find(this.userdata, x => x.email === req.body.email);
+            try{
+               let res = JSON.parse(Request('POST','https://recycling-uaca.herokuapp.com/api/v1/authenticate',{
+                headers: {
+                    'Content-Type': 'application/json',
+                  },
+                json : req.body
+              }).getBody('utf8')); 
+              if(res.user){ 
+                let user = _userprofile(res.user);
+                return callback(null,user);  
+            }
+            }catch(error){
+                console.log(error);
+               return callback(true,null); 
+            }
+            
+
+            
         }
-        console.log('auth fail;');
-        return callback(null,this.failed);
+        
+        
     };
 
     _forget (req,callback){

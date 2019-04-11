@@ -6,8 +6,8 @@ var Request = require("sync-request");
 
 class cp_service extends Service_api {
     _recyclingPoints(callback){
-        var response = this.CP; //Request("GET","https://recycling-uaca.herokuapp.com/api/v1/collection_points");
-        return callback(null,response); //JSON.parse(response.getBody('utf8')));
+        var response = JSON.parse(Request("GET","https://recycling-uaca.herokuapp.com/api/v1/collection_points").getBody('utf8'));
+        return callback(null,response); //response.;
     }
 
     _addPoints(req,points,callback){
@@ -16,6 +16,7 @@ class cp_service extends Service_api {
             return callback(error,null);
         }
         req.session.user.Points += 10;
+        Request("GET","https://recycling-uaca.herokuapp.com/api/v1/collection_points/assign_points?user_id="+req.session.user.id)
         console.log(req.session.user);
         return callback(null,this.success);
     }

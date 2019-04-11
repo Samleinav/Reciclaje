@@ -1,38 +1,37 @@
 var express = require('express')
     router = express.Router();
-    ServiceShop = require('./Service_shop');
+   ServiceShop = require('./Service_shop');
 
-    router.get('*',function(req,res,next){
-      if(req.session.user){ 
-        res.locals.user = req.session.user 
-        res.locals.hostname = req.subdomains;
-        return next()};
-
-        ServiceShop._user(req,function(error,response){
-        res.locals.user = req.session.user  = response; 
-        res.locals.hostname = req.subdomains;
-        return next();
-      });
-    });
-
-  router.get('/', function(req, res, next) {  
-    res.render('index2', { title: 'Shop'});
-  });
 
   router.get('/login',function(req,res,next){
     res.render('login', { layout : false });    
   });
- 
+  router.get('*',function(req,res,next){
+    if(req.session.user){ 
+      res.locals.user = req.session.user 
+      res.locals.hostname = req.subdomains;
+      return next()
+      };
+
+      // ServiceShop._user(req,function(error,response){
+      // res.locals.user = req.session.user  = response; 
+      // res.locals.hostname = req.subdomains;
+      // return next();
+      //});
+      return res.redirect('/login');
+  });
+  router.get('/', function(req, res, next) {  
+    res.render('index2', { title: 'Shop'});
+  });
   router.post('/login',function(req,res,next){
     ServiceShop._login(req,function(error,response){
-      if(error || response == false){
-        res.render('login', { layout : false , msg : "Fail Login"});
+     if(error){
+        return res.render('login', { layout : false , msg : "Fail Login"});
       }
       req.session.user = response;
       res.redirect('/');
     })
   });
-
   router.post('/shop/points/read',function(id,res,next){
     ServiceShop._readPoints(id,function(error,response){
       if(error){ res.json("No se pudo agregar")}
@@ -51,7 +50,6 @@ var express = require('express')
         res.json(response);
     });
   });
-
   router.post('/shop/products',function(req,res,next){
     ServiceShop._products(req,function(error,response){
       if(error){ return res.json(null)}
